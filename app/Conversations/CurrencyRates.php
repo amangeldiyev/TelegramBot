@@ -16,12 +16,12 @@ class CurrencyRates extends Conversation
      */
     public function askReason()
     {
-        $question = Question::create("Huh - you woke me up. What do you need?")
+        $question = Question::create("Currency rates for USD, EUR, RUB")
             ->fallback('Unable to ask question')
             ->callbackId('ask_reason')
             ->addButtons([
                 Button::create('Currency Rates')->value('rates'),
-                Button::create('Subscribe')->value('subscribe'),
+                Button::create('Subscribe (Daily notification at 11:00)')->value('subscribe'),
                 Button::create('Unsubscribe')->value('unsubscribe'),
             ]);
 
