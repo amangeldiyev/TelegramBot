@@ -2,6 +2,9 @@
 
 namespace App\Console\Commands;
 
+use App\Api\CurrencyRates;
+use App\User;
+use BotMan\Drivers\Telegram\TelegramDriver;
 use Illuminate\Console\Command;
 
 class DailyCurrencyRatesNotification extends Command
@@ -37,6 +40,18 @@ class DailyCurrencyRatesNotification extends Command
      */
     public function handle()
     {
-        \Log::info('Notify users');
+        $botman = app('botman');
+
+        $users = User::all();
+
+        $rates = CurrencyRates::getRates();
+
+        foreach ($users as $user) {
+            foreach ($rates as $rate) {
+                $message = $rate['title'] . ": " . $rate['description'] . "(" . $rate['change'] . ")";
+                $botman->say($message, $user->userID, TelegramDriver::class);
+            }
+        }
+
     }
 }

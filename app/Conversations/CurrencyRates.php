@@ -2,13 +2,12 @@
 
 namespace App\Conversations;
 
+use App\Api\CurrencyRates as ApiCurrencyRates;
 use App\User;
-use Illuminate\Foundation\Inspiring;
 use BotMan\BotMan\Messages\Incoming\Answer;
 use BotMan\BotMan\Messages\Outgoing\Question;
 use BotMan\BotMan\Messages\Outgoing\Actions\Button;
 use BotMan\BotMan\Messages\Conversations\Conversation;
-use GuzzleHttp\Client;
 
 class CurrencyRates extends Conversation
 {
@@ -23,33 +22,32 @@ class CurrencyRates extends Conversation
             ->addButtons([
                 Button::create('Currency Rates')->value('rates'),
                 Button::create('Subscribe')->value('subscribe'),
+                Button::create('Unsubscribe')->value('unsubscribe'),
             ]);
 
         return $this->ask($question, function (Answer $answer) {
             if ($answer->isInteractiveMessageReply()) {
                 if ($answer->getValue() === 'rates') {
-                    $client = new Client();
+                    $rates = ApiCurrencyRates::getRates();
 
-                    $response = $client->request('GET', 'https://nationalbank.kz/rss/rates_all.xml?switch=russian');
-
-                    $xml = new \SimpleXMLElement($response->getBody()->getContents());
-
-                    $usd = "USD: " . (string)$xml->channel->item[4]->description . "(" . $xml->channel->item[4]->change . ")";
-                    $eur = "EUR: " . (string)$xml->channel->item[5]->description . "(" . $xml->channel->item[5]->change . ")";
-                    $rub = "RUB: " . (string)$xml->channel->item[14]->description . "(" . $xml->channel->item[14]->change . ")";
-
-                    $this->say($usd);
-                    $this->say($eur);
-                    $this->say($rub);
-                } else {
+                    foreach ($rates as $rate) {
+                        $this->say($rate['title'] . ": " . $rate['description'] . "(" . $rate['change'] . ")");
+                    }
+                } elseif ($answer->getValue() === 'subscribe') {
                     $user = $this->bot->getUser();
 
                     User::updateOrCreate(
-                        ['userID' => $user->getId(),],
+                        ['userID' => $user->getId()],
                         ['name' => $user->getFirstName(), 'username' => $user->getUsername()]
                     );
 
                     $this->say('Successfully subscribed!');
+                } else {
+                    $user = $this->bot->getUser();
+
+                    User::where('userID', $user->getId())->delete();
+
+                    $this->say('Successfully unsubscribed!');
                 }
             }
         });
