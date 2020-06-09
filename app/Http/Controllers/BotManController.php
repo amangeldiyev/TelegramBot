@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Conversations\CurrencyRates;
 use BotMan\BotMan\BotMan;
 use Illuminate\Http\Request;
-use App\Conversations\ExampleConversation;
 
 class BotManController extends Controller
 {
@@ -32,6 +32,6 @@ class BotManController extends Controller
      */
     public function startConversation(BotMan $bot)
     {
-        $bot->startConversation(new ExampleConversation());
+        $bot->startConversation(new CurrencyRates());
     }
 }
