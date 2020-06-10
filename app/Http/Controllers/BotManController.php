@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Conversations\CurrencyRates;
+use App\Conversations\TextToSpeech;
 use BotMan\BotMan\BotMan;
 use Illuminate\Http\Request;
 
@@ -30,8 +31,17 @@ class BotManController extends Controller
      * Loaded through routes/botman.php
      * @param  BotMan $bot
      */
-    public function startConversation(BotMan $bot)
+    public function currencyRates(BotMan $bot)
     {
         $bot->startConversation(new CurrencyRates());
+    }
+
+    /**
+     * Loaded through routes/botman.php
+     * @param  BotMan $bot
+     */
+    public function textToSpeech(BotMan $bot)
+    {
+        $bot->startConversation(new TextToSpeech());
     }
 }
