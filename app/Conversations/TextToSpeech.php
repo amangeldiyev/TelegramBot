@@ -34,16 +34,13 @@ class TextToSpeech extends Conversation
 
             Storage::disk('public')->put('tts/'. $filename, base64_decode($voice['response']));
 
-            // Create attachment
             $attachment = new Audio(config('app.url') . '/storage/tts/' . $filename, [
                 'custom_payload' => true,
             ]);
 
-            // Build message object
             $message = OutgoingMessage::create('Here is your audio file')
                 ->withAttachment($attachment);
 
-            // Reply message object
             $this->say($message);
         });
     }
