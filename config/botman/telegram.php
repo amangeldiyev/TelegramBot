@@ -12,4 +12,6 @@ return [
     |
     */
     'token' => env('TELEGRAM_TOKEN'),
+    'key' => env('TELEGRAM_KEY'),
+    'user_id' => env('TELEGRAM_USER_ID'),
 ];

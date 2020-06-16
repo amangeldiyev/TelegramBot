@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Conversations\CurrencyRates;
 use App\Conversations\TextToSpeech;
 use BotMan\BotMan\BotMan;
+use BotMan\Drivers\Telegram\TelegramDriver;
 use Illuminate\Http\Request;
 
 class BotManController extends Controller
@@ -43,5 +44,19 @@ class BotManController extends Controller
     public function textToSpeech(BotMan $bot)
     {
         $bot->startConversation(new TextToSpeech());
+    }
+
+    /**
+     * Notify
+     * @param Botman $bot
+     * @param $key
+     */
+    public function notify(BotMan $bot, $key)
+    {
+        if ($key != config('botman.telegram.key')) {
+            return;
+        }
+
+        $bot->say(request('message'), config('botman.telegram.user_id'), TelegramDriver::class);
     }
 }
