@@ -48,7 +48,7 @@ class DailyCurrencyRatesNotification extends Command
 
         foreach ($users as $user) {
             foreach ($rates as $rate) {
-                sleep(2);
+                sleep(1);
                 $message = $rate['title'] . ": " . $rate['description'] . "(" . $rate['change'] . ")";
                 $botman->say($message, $user->userID, TelegramDriver::class);
             }
