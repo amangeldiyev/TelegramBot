@@ -51,12 +51,14 @@ class BotManController extends Controller
      * @param Botman $bot
      * @param $key
      */
-    public function notify(BotMan $bot, $key)
+    public function notify($key)
     {
         if ($key != config('botman.telegram.key')) {
             return;
         }
 
-        $bot->say(request('message'), config('botman.telegram.user_id'), TelegramDriver::class);
+        $botman = app('botman');
+
+        $botman->say(request('message'), config('botman.telegram.user_id'), TelegramDriver::class);
     }
 }
