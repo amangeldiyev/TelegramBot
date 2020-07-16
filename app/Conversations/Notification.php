@@ -71,10 +71,12 @@ class Notification extends Conversation
                             $users = NotificationSubscription::where('code', $selected_code)->get();
                             $text = AppNotification::where('code', $selected_code)->first()->text;
 
+                            $this->say('Sending notification to subscribed users!');
+
                             foreach ($users as $receiver) {
                                 sleep(1);
 
-                                $this->say($text, $receiver->userID, TelegramDriver::class);
+                                $this->bot->say($text, $receiver->userID, TelegramDriver::class);
                             }
                         }
                     });
@@ -119,7 +121,7 @@ class Notification extends Conversation
             $buttons[] = Button::create($desc)->value($code);
         }
 
-        $question = Question::create("Select notification")
+        $question = Question::create("Select notification:")
             ->addButtons($buttons);
 
         return $question;
