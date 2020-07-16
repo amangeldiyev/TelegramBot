@@ -57,6 +57,7 @@ class Notification extends Conversation
                     }
 
                     $select_notification = Question::create("Select notification")
+                        ->callbackId('ask_reason')
                         ->addButtons($buttons);
                     
                     $this->ask($select_notification, function (Answer $selected) {
