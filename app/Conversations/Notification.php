@@ -39,7 +39,8 @@ class Notification extends Conversation
                     AppNotification::create([
                         'userID' => $user->getId(),
                         'code' => $code,
-                        'text' => 'New notifiction'
+                        'desc' => 'Notification with code: ' . $code,
+                        'text' => 'New notifiction message'
                     ]);
 
                     $this->say('Your code: ' . $code);
@@ -52,13 +53,16 @@ class Notification extends Conversation
                     $buttons = [];
 
                     foreach ($notifications as $code => $desc) {
-                        info($code);
                         $buttons[] = Button::create($desc)->value($code);
                     }
 
                     $select_notification = Question::create("Select notification")
-                        ->callbackId('ask_reason')
-                        ->addButtons($buttons);
+                        ->addButtons([
+                            Button::create('Set up notification')->value('set-up'),
+                            Button::create('Change message text')->value('text'),
+                            Button::create('Notify')->value('notify'),
+                            Button::create('Subscribe')->value('subscribe'),
+                        ]);
                     
                     $this->ask($select_notification, function (Answer $selected) {
                         if ($selected->isInteractiveMessageReply()) {
