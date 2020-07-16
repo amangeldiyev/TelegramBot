@@ -17,11 +17,9 @@ class CurrencyRates
         $xml = new \SimpleXMLElement($response->getBody()->getContents());
 
         return $xml;
-
-        
     }
 
-    public static function getRates($currency_ids = [4,5,14])
+    public static function getRates($currency_ids = [0,1,2])
     {
         $xml = self::rates();
 
