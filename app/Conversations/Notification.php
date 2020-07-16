@@ -3,6 +3,7 @@
 namespace App\Conversations;
 
 use App\Notification as AppNotification;
+use App\NotificationSubscription;
 use Illuminate\Support\Str;
 use BotMan\BotMan\Messages\Incoming\Answer;
 use BotMan\BotMan\Messages\Outgoing\Question;
@@ -59,9 +60,9 @@ class Notification extends Conversation
                     $select_notification = Question::create("Select notification")
                         ->addButtons($buttons);
                     
-                    $this->ask($select_notification, function (Answer $selected) {
-                        if ($selected->isInteractiveMessageReply()) {
-                            $selected_code = $selected->getValue();
+                    $this->ask($select_notification, function (Answer $answer) {
+                        if ($answer->isInteractiveMessageReply()) {
+                            $selected_code = $answer->getValue();
 
                             $this->ask('Send text to transform', function (Answer $answer) use ($selected_code) {
                                 $text = $answer->getText();
@@ -78,7 +79,20 @@ class Notification extends Conversation
                 } elseif ($answer->getValue() === 'notify') {
                     // notify users
                 } elseif ($answer->getValue() === 'subscribe') {
-                    // subscribe
+                    $this->ask('Enter notification code', function (Answer $answer) use ($user) {
+                        $code = $answer->getText();
+
+                        if (AppNotification::where('code', $code)->exists()) {
+                            NotificationSubscription::create([
+                                'userID' => $user->getId(),
+                                'code' => $code
+                            ]);
+
+                            $this->say('Subscribed to: ' . $code);
+                        } else {
+                            $this->say('Code not found!');
+                        }
+                    });
                 }
             }
         });
