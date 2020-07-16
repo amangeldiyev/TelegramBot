@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Conversations\CurrencyRates;
+use App\Conversations\Notification;
 use App\Conversations\TextToSpeech;
 use BotMan\BotMan\BotMan;
 use BotMan\Drivers\Telegram\TelegramDriver;
@@ -44,6 +45,15 @@ class BotManController extends Controller
     public function textToSpeech(BotMan $bot)
     {
         $bot->startConversation(new TextToSpeech());
+    }
+
+    /**
+     * Loaded through routes/botman.php
+     * @param  BotMan $bot
+     */
+    public function notification(BotMan $bot)
+    {
+        $bot->startConversation(new Notification());
     }
 
     /**
