@@ -9,6 +9,7 @@ use BotMan\BotMan\Messages\Incoming\Answer;
 use BotMan\BotMan\Messages\Outgoing\Question;
 use BotMan\BotMan\Messages\Outgoing\Actions\Button;
 use BotMan\BotMan\Messages\Conversations\Conversation;
+use BotMan\Drivers\Telegram\TelegramDriver;
 
 class Notification extends Conversation
 {
@@ -46,21 +47,7 @@ class Notification extends Conversation
 
                     $this->say('Your code: ' . $code);
                 } elseif ($answer->getValue() === 'text') {
-                    $notifications = AppNotification::where('userID', $user->getId())
-                                        ->get()
-                                        ->pluck('desc', 'code')
-                                        ->all();
-                    
-                    $buttons = [];
-
-                    foreach ($notifications as $code => $desc) {
-                        $buttons[] = Button::create($desc)->value($code);
-                    }
-
-                    $select_notification = Question::create("Select notification")
-                        ->addButtons($buttons);
-                    
-                    $this->ask($select_notification, function (Answer $answer) {
+                    $this->ask($this->getAvailableNotifications($user->getId()), function (Answer $answer) {
                         if ($answer->isInteractiveMessageReply()) {
                             $selected_code = $answer->getValue();
 
@@ -77,7 +64,20 @@ class Notification extends Conversation
                         }
                     });
                 } elseif ($answer->getValue() === 'notify') {
-                    // notify users
+                    $this->ask($this->getAvailableNotifications($user->getId()), function (Answer $answer) {
+                        if ($answer->isInteractiveMessageReply()) {
+                            $selected_code = $answer->getValue();
+
+                            $users = NotificationSubscription::where('code', $selected_code)->get();
+                            $text = AppNotification::where('code', $selected_code)->first()->text;
+
+                            foreach ($users as $receiver) {
+                                sleep(1);
+
+                                $$this->say($text, $receiver->userID, TelegramDriver::class);
+                            }
+                        }
+                    });
                 } elseif ($answer->getValue() === 'subscribe') {
                     $this->ask('Enter notification code', function (Answer $answer) use ($user) {
                         $code = $answer->getText();
@@ -104,5 +104,24 @@ class Notification extends Conversation
     public function run()
     {
         $this->askReason();
+    }
+
+    private function getAvailableNotifications($userID)
+    {
+        $notifications = AppNotification::where('userID', $userID)
+            ->get()
+            ->pluck('desc', 'code')
+            ->all();
+
+        $buttons = [];
+
+        foreach ($notifications as $code => $desc) {
+            $buttons[] = Button::create($desc)->value($code);
+        }
+
+        $question = Question::create("Select notification")
+            ->addButtons($buttons);
+
+        return $question;
     }
 }
