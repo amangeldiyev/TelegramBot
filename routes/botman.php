@@ -7,4 +7,4 @@ $botman->hears('/cr', BotManController::class.'@currencyRates');
 
 $botman->hears('/tts', BotManController::class.'@textToSpeech');
 
-$botman->hears('/notification', BotManController::class.'@notification');
+$botman->hears('/notif', BotManController::class.'@notification');

@@ -52,6 +52,7 @@ class Notification extends Conversation
                     $buttons = [];
 
                     foreach ($notifications as $code => $desc) {
+                        info($code);
                         $buttons[] = Button::create($desc)->value($code);
                     }
 
