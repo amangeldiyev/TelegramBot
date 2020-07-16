@@ -44,7 +44,7 @@ class Notification extends Conversation
 
                     $this->say('Your code: ' . $code);
                 } elseif ($answer->getValue() === 'text') {
-                    $notifications = AppNotification::where('userID', 1)
+                    $notifications = AppNotification::where('userID', $user->getId())
                                         ->get()
                                         ->pluck('desc', 'code')
                                         ->all();
