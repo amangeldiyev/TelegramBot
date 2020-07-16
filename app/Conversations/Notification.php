@@ -74,7 +74,7 @@ class Notification extends Conversation
                             foreach ($users as $receiver) {
                                 sleep(1);
 
-                                $$this->say($text, $receiver->userID, TelegramDriver::class);
+                                $this->say($text, $receiver->userID, TelegramDriver::class);
                             }
                         }
                     });
