@@ -57,12 +57,7 @@ class Notification extends Conversation
                     }
 
                     $select_notification = Question::create("Select notification")
-                        ->addButtons([
-                            Button::create('Set up notification')->value('set-up'),
-                            Button::create('Change message text')->value('text'),
-                            Button::create('Notify')->value('notify'),
-                            Button::create('Subscribe')->value('subscribe'),
-                        ]);
+                        ->addButtons($buttons);
                     
                     $this->ask($select_notification, function (Answer $selected) {
                         if ($selected->isInteractiveMessageReply()) {
