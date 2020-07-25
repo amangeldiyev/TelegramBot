@@ -19,7 +19,7 @@ class CurrencyRates
         return $xml;
     }
 
-    public static function getRates($currency_ids = [0,1,2])
+    public static function getRates($currency_ids = [10,11,24])
     {
         $xml = self::rates();
 
